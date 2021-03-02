@@ -11,12 +11,24 @@ class ReactSwitch extends Component {
   constructor(props) {
     super(props);
     const { height, width, handleDiameter, checked } = props;
-    this.$handleDiameter = handleDiameter || height - 2;
-    this.$checkedPos = Math.max(
-      width - height,
-      width - (height + this.$handleDiameter) / 2
+
+    this.$vertical = height > width;
+    const largeSize = this.$vertical ? height : width;
+    this.$smallerSize = this.$vertical ? width : height;
+    this.$orientation = this.$vertical ? 'Y' : 'X';
+    this.$eventField = `client${this.$orientation}`;
+    this.$handleDiameter = handleDiameter || this.$smallerSize - 2;
+    this.$handleOffset = Math.max(0, (this.$smallerSize - this.$handleDiameter) / 2);
+    this.$iconSize = Math.min(
+      this.$smallerSize * 1.5,
+      largeSize - (this.$handleDiameter + this.$smallerSize) / 2 + 1
     );
-    this.$uncheckedPos = Math.max(0, (height - this.$handleDiameter) / 2);
+
+    this.$checkedPos = Math.max(
+      largeSize - this.$smallerSize,
+      largeSize - (this.$smallerSize + this.$handleDiameter) / 2
+    );
+    this.$uncheckedPos = Math.max(0, (this.$smallerSize - this.$handleDiameter) / 2);
     this.state = {
       $pos: checked ? this.$checkedPos : this.$uncheckedPos
     };
@@ -122,14 +134,14 @@ class ReactSwitch extends Component {
       return;
     }
 
-    this.$onDragStart(event.clientX);
+    this.$onDragStart(event[this.$eventField]);
     window.addEventListener("mousemove", this.$onMouseMove);
     window.addEventListener("mouseup", this.$onMouseUp);
   }
 
   $onMouseMove(event) {
     event.preventDefault();
-    this.$onDrag(event.clientX);
+    this.$onDrag(event[this.$eventField]);
   }
 
   $onMouseUp(event) {
@@ -140,11 +152,11 @@ class ReactSwitch extends Component {
 
   $onTouchStart(event) {
     this.$checkedStateFromDragging = null;
-    this.$onDragStart(event.touches[0].clientX);
+    this.$onDragStart(event.touches[0][this.$eventField]);
   }
 
   $onTouchMove(event) {
-    this.$onDrag(event.touches[0].clientX);
+    this.$onDrag(event.touches[0][this.$eventField]);
   }
 
   $onTouchEnd(event) {
@@ -241,7 +253,7 @@ class ReactSwitch extends Component {
     const backgroundStyle = {
       height,
       width,
-      margin: Math.max(0, (this.$handleDiameter - height) / 2),
+      margin: Math.max(0, (this.$handleDiameter - this.$smallerSize) / 2),
       position: "relative",
       background: getBackgroundColor(
         $pos,
@@ -259,11 +271,8 @@ class ReactSwitch extends Component {
     };
 
     const checkedIconStyle = {
-      height,
-      width: Math.min(
-        height * 1.5,
-        width - (this.$handleDiameter + height) / 2 + 1
-      ),
+      height: this.$vertical ? this.$iconSize : height,
+      width: this.$vertical ? width : this.$iconSize,
       position: "relative",
       opacity:
         ($pos - this.$uncheckedPos) / (this.$checkedPos - this.$uncheckedPos),
@@ -274,17 +283,15 @@ class ReactSwitch extends Component {
     };
 
     const uncheckedIconStyle = {
-      height,
-      width: Math.min(
-        height * 1.5,
-        width - (this.$handleDiameter + height) / 2 + 1
-      ),
+      height: this.$vertical ? this.$iconSize : height,
+      width: this.$vertical ? width : this.$iconSize,
       position: "absolute",
       opacity:
         1 -
         ($pos - this.$uncheckedPos) / (this.$checkedPos - this.$uncheckedPos),
       right: 0,
-      top: 0,
+      top: this.$vertical ? undefined : 0,
+      bottom: this.$vertical ? 0 : undefined,
       pointerEvents: "none",
       WebkitTransition: $isDragging ? null : "opacity 0.25s",
       MozTransition: $isDragging ? null : "opacity 0.25s",
@@ -305,8 +312,9 @@ class ReactSwitch extends Component {
       cursor: disabled ? "default" : "pointer",
       borderRadius: typeof borderRadius === "number" ? borderRadius - 1 : "50%",
       position: "absolute",
-      transform: `translateX(${$pos}px)`,
-      top: Math.max(0, (height - this.$handleDiameter) / 2),
+      transform: `translate${this.$orientation}(${$pos}px)`,
+      top: this.$vertical ? 0 : this.$handleOffset,
+      left: this.$vertical ? this.$handleOffset : undefined,
       outline: 0,
       boxShadow: $hasOutline ? activeBoxShadow : boxShadow,
       border: 0,

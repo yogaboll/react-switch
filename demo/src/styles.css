@@ -15,3 +15,25 @@ pre {
   padding: 0 10px;
   background: #eee;
 }
+
+.vertical-switch {
+  display: inline-flex;
+}
+.vertical-switch .react-switch-handle > div {
+  text-align: center;
+  padding-left: 2px;
+}
+
+.vertical-switch__selectors {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  cursor: pointer;
+  margin-left: 20px;
+}
+.vertical-switch__selector {
+  transition: opacity .3s;
+}
+.vertical-switch__selector_hide {
+  opacity: .5;
+}

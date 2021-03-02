@@ -4,3 +4,4 @@ dist
 stats.json
 coverage
 .vscode
+.idea

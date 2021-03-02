@@ -43,6 +43,39 @@ describe("Props", () => {
     );
     expect(toJson(wrapper)).toMatchSnapshot();
   });
+
+  it("matches snapshot with horizontal switch", () => {
+    const wrapper = render(
+      <Switch
+        checked
+        onChange={noop}
+        disabled
+        onColor="#abc"
+        offHandleColor="#def"
+        handleDiameter={9}
+        checkedIcon={
+          <div
+            style={{
+              color: "pink",
+              paddingTop: 2,
+              paddingLeft: 6,
+              fontSize: 20
+            }}
+          >
+            ❤
+          </div>
+        }
+        boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+        height={37}
+        width={13}
+        className="qux"
+        id="foo"
+        aria-labelledby="baz"
+        aria-label="bar"
+      />
+    );
+    expect(toJson(wrapper)).toMatchSnapshot();
+  });
 });
 
 describe("handle", () => {

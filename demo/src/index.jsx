@@ -5,6 +5,7 @@ import BasicExample from "./BasicExample";
 import MaterialDesign from "./MaterialDesign";
 import KitchenSink from "./KitchenSink";
 import Disabled from "./Disabled";
+import Vertical from "./Vertical";
 import AriaLabelledby from "./AriaLabelledby";
 import AriaLabel from "./AriaLabel";
 import PassThroughProps from "./PassThroughProps";
@@ -18,6 +19,7 @@ function Examples() {
       <MaterialDesign />
       <KitchenSink />
       <Disabled />
+      <Vertical />
       <PassThroughProps />
       <OnlyTurnedOn />
       <AriaLabelledby />
