@@ -10,13 +10,15 @@ import hexColorPropType from "./hexColorPropType";
 class ReactSwitch extends Component {
   constructor(props) {
     super(props);
-    const { height, width, handleDiameter, checked } = props;
+    const { height, width, handleDiameter, handleWidth, handleBorder, checked } = props;
     this.$handleDiameter = handleDiameter || height - 2;
-    this.$checkedPos = Math.max(
+    this.$handleWidth = handleWidth || this.$handleDiameter;
+    this.$handleBorder = handleBorder || 0;
+    this.$checkedPos = Math.min(
       width - height,
-      width - (height + this.$handleDiameter) / 2
+      width - this.$handleWidth
     );
-    this.$uncheckedPos = Math.max(0, (height - this.$handleDiameter) / 2);
+    this.$uncheckedPos = Math.max(0, (height - this.$handleWidth) / 2);
     this.state = {
       $pos: checked ? this.$checkedPos : this.$uncheckedPos
     };
@@ -215,6 +217,8 @@ class ReactSwitch extends Component {
       width,
       borderRadius,
       handleDiameter, // just to filter this prop out
+      handleWidth,
+      handleBorder,
       ...rest
     } = this.props;
 
@@ -241,7 +245,7 @@ class ReactSwitch extends Component {
     const backgroundStyle = {
       height,
       width,
-      margin: Math.max(0, (this.$handleDiameter - height) / 2),
+      margin: Math.max(0, (this.$handleDiameter- height) / 2),
       position: "relative",
       background: getBackgroundColor(
         $pos,
@@ -262,7 +266,7 @@ class ReactSwitch extends Component {
       height,
       width: Math.min(
         height * 1.5,
-        width - (this.$handleDiameter + height) / 2 + 1
+        width - (this.$handleWidth + height) / 2 + 1
       ),
       position: "relative",
       opacity:
@@ -277,7 +281,7 @@ class ReactSwitch extends Component {
       height,
       width: Math.min(
         height * 1.5,
-        width - (this.$handleDiameter + height) / 2 + 1
+        width - (this.$handleWidth + height) / 2 + 1
       ),
       position: "absolute",
       opacity:
@@ -293,7 +297,7 @@ class ReactSwitch extends Component {
 
     const handleStyle = {
       height: this.$handleDiameter,
-      width: this.$handleDiameter,
+      width: this.$handleWidth,
       background: getBackgroundColor(
         $pos,
         this.$checkedPos,
@@ -309,7 +313,7 @@ class ReactSwitch extends Component {
       top: Math.max(0, (height - this.$handleDiameter) / 2),
       outline: 0,
       boxShadow: $hasOutline ? activeBoxShadow : boxShadow,
-      border: 0,
+      border: this.$handleBorder,
       WebkitTransition: $isDragging
         ? null
         : "background-color 0.25s, transform 0.25s, box-shadow 0.15s",
@@ -323,7 +327,7 @@ class ReactSwitch extends Component {
 
     const uncheckedHandleIconStyle = {
       height: this.$handleDiameter,
-      width: this.$handleDiameter,
+      width: this.$handleWidth,
       opacity: Math.max(
         (1 -
           ($pos - this.$uncheckedPos) /
@@ -343,7 +347,7 @@ class ReactSwitch extends Component {
 
     const checkedHandleIconStyle = {
       height: this.$handleDiameter,
-      width: this.$handleDiameter,
+      width: this.$handleWidth,
       opacity: Math.max(
         (($pos - this.$uncheckedPos) / (this.$checkedPos - this.$uncheckedPos) -
           0.5) *
@@ -428,6 +432,7 @@ ReactSwitch.propTypes = {
   offHandleColor: hexColorPropType,
   onHandleColor: hexColorPropType,
   handleDiameter: PropTypes.number,
+  handleWidth: PropTypes.number,
   uncheckedIcon: PropTypes.oneOfType([PropTypes.bool, PropTypes.element]),
   checkedIcon: PropTypes.oneOfType([PropTypes.bool, PropTypes.element]),
   boxShadow: PropTypes.string,
